@@ -1,37 +1,29 @@
 # parity-net-tls-hub
 
-`parity-net-tls-hub` is a TypeScript project for Networking. It turns design a TypeScript verification harness for tls systems, covering state machine modeling, transition tables, and failure-oriented tests into a small local model with readable fixtures and a direct verification command.
+`parity-net-tls-hub` is a TypeScript project in networking. Its focus is to design a TypeScript verification harness for tls systems, covering state machine modeling, transition tables, and failure-oriented tests.
 
-## Reading Parity Net TLS Hub
+## Project Rationale
 
-Start with the README, then open `metadata/project.json` to check the constants behind the examples. After that, `fixtures/cases.csv` shows the compact path and `examples/extended_cases.csv` gives a wider look at the same rule.
+The point is to make a small domain rule concrete enough that a reader can change it and immediately see what broke.
 
-## What It Does
+## Parity Net TLS Hub Review Notes
 
-- Includes extended examples for retry behavior, including `recovery` and `degraded`.
-- Documents policy decisions tradeoffs in `docs/operations.md`.
-- Runs locally with a single verification command and no external credentials.
-- Stores project constants and verification metadata in `metadata/project.json`.
-- Adds a repository audit script that checks structure before running the language verifier.
+For a quick review, compare `packet span` with `route drift` before reading the middle cases.
 
-## Purpose
+## Feature Set
 
-I use this kind of project to make a rule visible before adding more machinery around it. The important part here is not the size of the codebase. It is that the input signals, scoring rule, fixture data, and expected output can all be checked in one sitting.
+- `fixtures/domain_review.csv` adds cases for packet span and retry pressure.
+- `metadata/domain-review.json` records the same cases in structured form.
+- `config/review-profile.json` captures the read order and the two review questions.
+- `examples/parity-net-tls-walkthrough.md` walks through the case spread.
+- The TypeScript code includes a review path for `packet span` and `route drift`.
+- `docs/field-notes.md` explains the strongest and weakest cases.
 
-## Files Worth Reading
+## Architecture
 
-- `src`: primary implementation
-- `tests`: verification harness
-- `fixtures`: compact golden scenarios
-- `examples`: expanded scenario set
-- `metadata`: project constants and verification metadata
-- `docs`: operations and extension notes
-- `scripts`: local verification and audit commands
-- `package.json`: Node package scripts
+The repository has two validation layers: the original compact policy fixture and the domain review fixture. They are separate so one can change without hiding failures in the other.
 
-## Design Sketch
-
-The core is a scoring model over demand, capacity, latency, risk, and weight. That keeps packet shape, socket state, and retry behavior in one explicit decision path. The threshold is 183, with risk penalty 4, latency penalty 4, and weight bonus 2. The TypeScript project keeps types close to the model and compiles before running its checks.
+The TypeScript implementation avoids hidden state so fixture changes are easy to reason about.
 
 ## Usage
 
@@ -39,31 +31,10 @@ The core is a scoring model over demand, capacity, latency, risk, and weight. Th
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
-This runs the language-level build or test path against the compact fixture set.
+## Test Command
 
-## Fixture Notes
+The same command runs the local verification path. The highest-scoring domain case is `baseline` at 217, which lands in `ship`. The most cautious case is `edge` at 142, which lands in `ship`.
 
-`examples/extended_cases.csv` adds six named cases. I kept the names plain so failures are easy to read in a terminal: baseline, pressure, surge, degraded, recovery, and boundary.
+## Next Improvements
 
-## Verification
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit.ps1
-```
-
-The audit command checks repository structure and README constraints before it delegates to the verifier.
-
-## Limits
-
-The fixture set is deliberately small. That keeps the review surface clear, but it also means the model should not be treated as a complete domain simulator.
-
-## Next Directions
-
-- Add a comparison mode that shows how decisions change when one signal is adjusted.
-- Add a loader for `examples/extended_cases.csv` and promote selected cases into the language test suite.
-- Add a short report command that prints the score breakdown for a single scenario.
-- Add one more networking fixture that focuses on a malformed or borderline input.
-
-## Setup
-
-Clone the repository, enter the directory, and run the verifier. No database server, cloud account, or token is required.
+No external service is required. A deeper version would add more negative cases and a clearer boundary around invalid input.
