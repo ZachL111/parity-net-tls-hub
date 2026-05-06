@@ -1,0 +1,7 @@
+name,demand,capacity,latency,risk,weight,score,decision,reason
+baseline,58,90,20,12,7,92,review,networking baseline scenario exercises the review path for bounded failure handling
+pressure,85,71,24,18,10,93,review,networking pressure scenario exercises the review path for bounded failure handling
+surge,101,98,22,16,14,176,review,networking surge scenario exercises the review path for bounded failure handling
+degraded,72,60,34,29,5,-38,review,networking degraded scenario exercises the review path for bounded failure handling
+recovery,84,102,18,10,12,182,review,networking recovery scenario exercises the review path for bounded failure handling
+boundary,76,82,23,15,7,96,review,networking boundary scenario exercises the review path for bounded failure handling
