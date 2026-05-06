@@ -64,3 +64,9 @@ node dist/tests/policy.test.js
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-parity-net-tls-detail.ps1
 
 node dist/tests/domainReview.test.js
+
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-parity-net-tls-properties.ps1
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check-parity-net-tls-golden.ps1
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
